@@ -13,10 +13,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import User
 from .serializers import (
-    LoginSerializer,
-    LogoutSerializer,
     RegistrationSerializer,
-    UserSerializer,
 )
 
 
@@ -31,6 +28,8 @@ class RegistrationAPIView(APIView):
       serializer.is_valid(raise_exception=True)
       serializer.save()
       return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
 
 class ProductViewSet(viewsets.ModelViewSet):
    queryset = Product.objects.all()
