@@ -3,6 +3,9 @@ from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
     PermissionsMixin,
+    Group,
+    Permission
+
 )
 import uuid
 from typing import Any, Optional
@@ -38,11 +41,11 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser,PermissionsMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    username = models.CharField(db_index=True, max_lengh=255, unique=True)
+    username = models.CharField(db_index=True, max_length=255, unique=True)
     email = models.EmailField(db_index=True,unique=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-    created_at = models.DatetimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     birth_date = models.DateField(null=True)
     
@@ -62,6 +65,27 @@ class User(AbstractBaseUser,PermissionsMixin):
         return {'refresh': str(refresh), 'access': str(refresh.access_token)}
     
 
+    groups = models.ManyToManyField(
+        Group,
+        verbose_name=('groups'),
+        blank=True,
+        help_text=(
+            'The groups this user belongs to. A user will get all permissions '
+            'granted to each of their groups.'
+        ),
+        related_name="apiauth_groups",  # Custom related_name
+        related_query_name="apiauth",
+    )
+
+    # Define the 'user_permissions' field with a custom related_name
+    user_permissions = models.ManyToManyField(
+        Permission,
+        verbose_name=('user permissions'),
+        blank=True,
+        help_text=('Specific permissions for this user.'),
+        related_name="apiauth_user_permissions",  # Custom related_name
+        related_query_name="apiauth",
+    )
 
 
 class Product(models.Model):
