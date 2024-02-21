@@ -4,6 +4,6 @@ from .views import ProductViewSet, RegistrationAPIView
 
 router = DefaultRouter()
 router.register(r'products',ProductViewSet)
-urlpatterns = [path('/register', RegistrationAPIView.as_view(), name='register_user')]
+urlpatterns = [path('register', RegistrationAPIView.as_view(), name='register')]
 
 urlpatterns += router.urls
