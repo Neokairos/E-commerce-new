@@ -3114,6 +3114,24 @@ textarea.form-control-lg {
   --bs-btn-disabled-bg: #3cf281;
   --bs-btn-disabled-border-color: #3cf281;
 }
+.btn-success-darker {
+  --bs-btn-color: #fff; /* Text color */
+  --bs-btn-bg: #006400; /* Darker green background */
+  --bs-btn-border-color: #006400; /* Border color */
+  --bs-btn-hover-color: #fff; /* Text color on hover */
+  --bs-btn-hover-bg: #008000; /* Darker green background on hover */
+  --bs-btn-hover-border-color: #008000; /* Border color on hover */
+  --bs-btn-focus-shadow-rgb:   0,   128,   0; /* Shadow color on focus */
+  --bs-btn-active-color: #fff; /* Text color when active */
+  --bs-btn-active-bg: #008000; /* Darker green background when active */
+  --bs-btn-active-border-color: #008000; /* Border color when active */
+  --bs-btn-active-shadow: inset   0   3px   5px rgba(0,   0,   0,   0.125); /* Shadow when active */
+  --bs-btn-disabled-color: #fff; /* Text color when disabled */
+  --bs-btn-disabled-bg: #006400; /* Darker green background when disabled */
+  --bs-btn-disabled-border-color: #006400; /* Border color when disabled */
+}
+
+
 
 .btn-info {
   --bs-btn-color: #fff;

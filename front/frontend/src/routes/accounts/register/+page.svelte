@@ -5,9 +5,13 @@
 	import { notificationData } from '$lib/store/notificationStore';
 	import { post } from '$lib/utils/requestUtils';
 	import type { UserResponse } from '$lib/interfaces/user.interface';
-	import type { CustomError } from '$lib/interfaces/error.interface';
+	import { type CustomError } from '$lib/interfaces/error.interface';
 	import { changeText } from '$lib/helpers/buttonText';
-	import axios from 'axios';
+	import { quartOut } from 'svelte/easing';
+    import { showNotification } from '$lib/utils/notificationUtils'
+    import { SvelteToast } from '@zerodevx/svelte-toast';
+	import { userData } from '$lib/store/userStore';
+  
 
 	let email: string,
 		username: string,
@@ -16,99 +20,141 @@
 		errors: Array<CustomError>;
 
 	const submitForm = async () => {
-		const [jsonRes, err] = await post(`${variables.BASE_API_URI}/register`, {
+		const [jsonRes, err, status] = await post(`${variables.BASE_API_URI}/register`, {
 			user: {
 				email: email,
-				username: username,
+				username: username, 
 				password: password
 			}
 		});
 		const response: UserResponse = jsonRes;
+        const status_code: number = status
 
 		if (err.length > 0) {
 			errors = err;
-		} else if (response.user) {
-			notificationData.update(() => 'Registration successfull');
-			await goto('/shop');
-		}
+		} 
+		if (status_code === 201) {
+			showNotification('Registration Succesfully done!! ', 2000)
+			
+			setTimeout(() =>{
+                goto('/shop');
+            }, 2000)
+			if (response.user) {
+        		userData.set(response.user);
+    		} else {
+				console.error('no use object in the response: Response:', response.user)
+			}
+		} else {
+            showNotification('Registration Failed please try again.. ', 1000)
+            setTimeout(()=> {
+                goto('/accounts/register');
+            }, 1500)
+        }
 	};
-	const passwordConfirm = () => (password !== confirmPassword ? false : true);
+	$: passwordConfirm = () => password === confirmPassword;
 </script>
 
 <svelte:head>
-    <title>Registration Page</title>
+	<title>Registration Page</title>
 </svelte:head>
 
-<section class="container mt-5" in:fly={{ y:   100, duration:   500, delay:   650 }} out:fly={{ duration:   500 }}>
-    <h1 class="text-center mb-4">Register</h1>
-    {#if errors}
-        {#each errors as error}
-            <p class="text-center text-danger">{error.error}</p>
-        {/each}
-    {/if}
-    <form class="form" on:submit|preventDefault={submitForm}>
-        <!-- Each input field is wrapped in a Bootstrap row and centered -->
-        <div class="row justify-content-center">
-            <div class="col-12 col-md-6">
-                <input
-                    bind:value={username}
-                    type="text"
-                    class="form-control mb-3" 
-                    aria-label="Username"
-                    placeholder="Username"
-                    required
-                />
-            </div>
-        </div>
-        <div class="row justify-content-center">
-            <div class="col-12 col-md-6">
-                <input
-                    bind:value={email}
-                    type="email"
-                    class="form-control mb-3" 
-                    aria-label="Email address"
-                    placeholder="Email address"
-                    required
-                />
-            </div>
-        </div>
-        <div class="row justify-content-center">
-            <div class="col-12 col-md-6">
-                <input
-                    bind:value={password}
-                    type="password"
-                    class="form-control mb-3" 
-                    name="password"
-                    aria-label="Password"
-                    placeholder="Password"
-                    required
-                />
-            </div>
-        </div>
-        <div class="row justify-content-center">
-            <div class="col-12 col-md-6">
-                <input
-                    bind:value={confirmPassword}
-                    type="password"
-                    class="form-control mb-3" 
-                    name="confirmPassword"
-                    aria-label="Confirm password"
-                    placeholder="Confirm your password"
-                    required
-                />
-            </div>
-        </div>
-        <!-- Button is wrapped in a Bootstrap row and centered -->
-        <div class="row justify-content-center">
-            <div class="col-12 col-md-6">
-                {#if confirmPassword}
-                    <button class="btn btn-success w-100 mt-3" type="submit" on:click={(e) => changeText(e, 'Registering...')}>
-                        Register
-                    </button>
-                {:else}
-                    <button class="btn btn-danger w-100 mt-3" type="submit"  disabled>Register</button>
-                {/if}
-            </div>
-        </div>
-    </form>
+<section
+	class="container mt-5"
+	in:fly={{ y: 100, duration: 500, delay: 650 }}
+	out:fly={{ duration: 500 }}
+>
+	<div class="top-center">
+		<SvelteToast />
+	</div>
+
+	<h1 class="text-center mb-4">Register</h1>
+	{#if errors}
+		{#each errors as error (error.error)}
+			<p
+				class="text-center text-danger"
+				transition:fly={{ y: 20, duration: 500, easing: quartOut }}
+			>
+				{error.error}
+			</p>
+		{/each}
+	{/if}
+	<form class="form" on:submit|preventDefault={submitForm}>
+		<!-- Each input field is wrapped in a Bootstrap row and centered -->
+		<div class="row justify-content-center">
+			<div class="col-12 col-md-6">
+				<input
+					bind:value={username}
+					type="text"
+					class="form-control mb-3"
+					aria-label="Username"
+					placeholder="Username"
+					required
+				/>
+			</div>
+		</div>
+		<div class="row justify-content-center">
+			<div class="col-12 col-md-6">
+				<input
+					bind:value={email}
+					type="email"
+					class="form-control mb-3"
+					aria-label="Email address"
+					placeholder="Email address"
+					required
+				/>
+			</div>
+		</div>
+		<div class="row justify-content-center">
+			<div class="col-12 col-md-6">
+				<input
+					bind:value={password}
+					type="password"
+					class="form-control mb-3"
+					name="password"
+					aria-label="Password"
+					placeholder="Password"
+					required
+				/>
+			</div>
+		</div>
+		<div class="row justify-content-center">
+			<div class="col-12 col-md-6">
+				<input
+					bind:value={confirmPassword}
+					type="password"
+					class="form-control mb-3"
+					name="confirmPassword"
+					aria-label="Confirm password"
+					placeholder="Confirm your password"
+					required
+				/>
+			</div>
+		</div>
+		<!-- Button is wrapped in a Bootstrap row and centered -->
+		<div class="row justify-content-center">
+			<div class="col-12 col-md-6">
+				{#if passwordConfirm()}
+					<button
+						class="btn btn-success w-100 mt-3"
+						type="submit"
+						on:click={(e) => changeText(e, 'Registering...')}
+						aria-label="Register"
+						title="Click to Register"
+					>
+						Register
+					</button>
+				{:else}
+					<div class="text-danger">Passwords do not match</div>
+					<button
+						class="btn btn-danger w-100 mt-3"
+						type="submit"
+						disabled
+						aria-disabled="true"
+						aria-label="Register"
+						title="Passwords do not match">Register</button
+					>
+				{/if}
+			</div>
+		</div>
+	</form>
 </section>

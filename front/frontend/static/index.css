@@ -32,6 +32,109 @@
     align-items: center;
     justify-content: center;
 }
+.top-center {
+    position: absolute; /* Position the element absolutely within its nearest positioned ancestor */
+    top:  0; /* Align the element to the top of the container */
+    left:  50%; /* Position the left edge of the element halfway across the page */
+    transform: translateX(-50%); /* Shift the element back by half its width to truly center it horizontally */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
 
 
+.hover-animation {
+  position: relative;
+  display: inline-block;
+}
+
+.down-sub {
+  background-color: black;
+  position: absolute;
+  width: 200px;
+  height: 125px;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  z-index: 1;
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(.8);
+  transform-origin: top;
+  right: -5px;
+  transition: cubic-bezier(.54, -.65, .48, 1.64) .3s;
+ }
+
+.hover-animation:hover .down-sub {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+
+}
+
+.underlined-text {
+  text-align: center;
+  box-sizing: inherit;
+  font-family: inherit;
+  margin: 0;
+  padding: 0;
+  outline: 0;
+  font-size: .813rem;
+  color: #fff;
+  font-weight: 600;
+  position: relative;
+  top: 30px;
+  display: inline-block;
+  overflow: hidden; 
+}
+
+.underlined-text::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left:50%;
+  width: 0;
+  height: 2px;
+  background-color: whitesmoke;
+  transition: all 0.4s ease-in-out;
+}
+.underlined-text:hover::after {
+  width: 100%; /* Expand to full width */
+  left: 0; /* Align to the left */
+  transform: translateX(-50%, 50%); /* Center the expansion */
+ }
+
+.ou {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 14px;
+  color: white;
+  border-radius: 20%;
+  padding: 5px;
+  margin-top: 10px;
+}
+
+.navbar-image {
+  margin-right: auto; /* Pushes the image to the left side */
+  margin-left: 15px; /* Adds some space on the left side */
+ }
+
+
+.butn {
+  width: 135px;
+
+
+}
+@keyframes bezierPattern {
+  0% { background-color: #8823af; }
+  50% { background-color: #621191; }
+  75% { background-color: #5c146e; }
+  100% { background-color: #6b1a8b; }
+}
+
+.butn:hover {
+ animation: bezierPattern 2s cubic-bezier(0.54, -0.65, 0.48, 0.54) infinite; /* Apply the animation on hover */
+}

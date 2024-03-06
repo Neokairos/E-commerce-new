@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { AxiosError } from 'axios';
 import { browser } from '$app/environment';
 import { goto } from '$app/navigation';
 import type { Token, UserResponse } from '$lib/interfaces/user.interface';
@@ -27,8 +28,8 @@ export const browserSet = (key: string, value: string): void => {
 
 export const post = async (
     url: string,
-    body: unknown
-): Promise<[object, Array<CustomError>]> => {
+    body: unknown,
+): Promise<[object, Array<CustomError>, number]> => { // Updated return type
     try {
         const headers = { 'Authorization': '' };
         const token = browserGet('refreshToken');
@@ -37,19 +38,29 @@ export const post = async (
         }
         const res = await axios.post(url, body, { headers });
         const response = res.data;
-        if (response.errors) {
+        const status = res.status; // Capture the status
+
+        // Return the response object, an empty errors array, and the status
+        return [response, [], status];
+
+    } catch (error: any) {
+        if (error.response && error.response.data) {
             const errors: Array<CustomError> = [];
-            for (const p in response.errors) {
-                errors.push({ error: response.errors[p] });
+            if (error.response.data.username) {
+                errors.push({ error: "Username already exists. Please choose a different one." });
             }
-            return [{}, errors];
+            if (error.response.data.email) {
+                errors.push({ error: "This email already exists. Please choose a different one." });
+            }
+            // Return an empty object, the errors array, and the status
+            return [{}, errors, error.response.status];
         }
-        return [response, []];
-    } catch (error) {
-        const errors: Array<CustomError> = [{ error: 'An unknown error occurred.' }, { error: `${error} ` }];
-        return [{}, errors];
+
+        // If the error does not have the expected structure, return a default error
+        return [{}, [{ error: "An unexpected error occurred." }], 500]; // Assuming a generic error status
     }
 };
+
 
 
 export const getCurrentUser = async (
@@ -75,6 +86,7 @@ export const getCurrentUser = async (
             const error = data.user.error[0];
             return [{}, error];
         }
+        
         const response = res.data;
         return [response.user, []];
     } else {

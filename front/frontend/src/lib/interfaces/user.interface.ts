@@ -8,12 +8,11 @@ export interface User {
 	username?: string;
 	password?: string;
 	tokens?: Token;
-	bio?: string;
-	full_name?: string;
 	birth_date?: string;
 	is_staff?: boolean;
 }
 
 export interface UserResponse {
 	user?: User;
+	status?: number;
 }

@@ -42,8 +42,8 @@
 			<div class="col-12 col-md-4">
 				<img src={product.image} alt="product" class="w-100 mb-3" />
 				<h5 class="mt-4">Seller: {product.seller}</h5>
-				<a href="/shop/{product.id}/buy" class="btn btn-primary p-8 mt-2 pl-5">Buy</a>
-				<a href="/shop" class="btn btn-danger p-8 mt-2 pr-5">Back</a>
+				<a href="/shop/{product.id}/buy" class="btn btn-primary p-8 mb-5 mt-2 pr-5">Buy</a>
+				<a href="/shop" class="btn btn-danger p-8 mb-5 mt-2 pr-5 ">Back</a>
 			</div>
 			<div class="col-12 col-md-8 py-2">
 				<p class="mb-2">{product.description}</p>
@@ -51,7 +51,7 @@
 		</div>
 	{:else}
 		<p>No product was found with ID {data.id}</p>
-		<a href="/shop" class="btn btn-danger p-8 mt-2 pr-5">Back</a>
+		<a href="/shop" class="btn btn-danger p-8 mb-5 mt-2 pr-5">Back</a>
 	{/if}
 
 
