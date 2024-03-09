@@ -9,7 +9,6 @@
 	import { changeText } from '$lib/helpers/buttonText';
 	import { quartOut } from 'svelte/easing';
     import { showNotification } from '$lib/utils/notificationUtils'
-    import { SvelteToast } from '@zerodevx/svelte-toast';
 	import { userData } from '$lib/store/userStore';
   
 
@@ -34,7 +33,7 @@
 			errors = err;
 		} 
 		if (status_code === 201) {
-			showNotification('Registration Succesfully done!! ', 2000)
+			notificationData.set('Registration Succesfully done!!')
 			
 			setTimeout(() =>{
                 goto('/shop');
@@ -42,10 +41,10 @@
 			if (response.user) {
         		userData.set(response.user);
     		} else {
-				console.error('no use object in the response: Response:', response.user)
+				console.error('no user object in the response: Response:', response.user)
 			}
 		} else {
-            showNotification('Registration Failed please try again.. ', 1000)
+			notificationData.set('Registration Failed please try again..')
             setTimeout(()=> {
                 goto('/accounts/register');
             }, 1500)
@@ -63,9 +62,7 @@
 	in:fly={{ y: 100, duration: 500, delay: 650 }}
 	out:fly={{ duration: 500 }}
 >
-	<div class="top-center">
-		<SvelteToast />
-	</div>
+
 
 	<h1 class="text-center mb-4">Register</h1>
 	{#if errors}

@@ -4,11 +4,12 @@
 	import axios from 'axios';
 	import { onMount } from 'svelte';
 	import { productStore } from '../../store';
+	import { variables } from '$lib/utils/constants';
 	let loading = true;
 	onMount(async function () {
 		try {
 			if (!$productStore.all.length) {
-				const endpoint = 'http://127.0.0.1:8000/api/products';
+				const endpoint = `${variables.BASE_API_URI}/products`;
 				const response = await axios.get(endpoint);
 				productStore.update((n) => ({ ...n, all: response.data }));
 				loading = false;

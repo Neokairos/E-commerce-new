@@ -1,4 +1,4 @@
-from rest_framework import serializers
+from rest_framework import serializers, exceptions
 from .models import Product
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
@@ -8,7 +8,7 @@ from .utils import validate_email as email_is_valid
 
 class RegistrationSerializer(serializers.ModelSerializer[User]):
     
-    password = serializers.CharField(max_length=20,min_length=4,write_only=True)
+    password = serializers.CharField(max_length=20,min_length=1,write_only=True)
     
     class Meta:
         model = User
@@ -93,9 +93,9 @@ class LoginSerializer(serializers.ModelSerializer[User]):
         return user
     
 class UserSerializer(serializers.ModelSerializer[User]):
-        """Handle serialization and deserialization of User objects."""
+        """Handle serialization and update of User objects."""
       
-        password = serializers.CharField(max_length=128, min_length=8, write_only=True)
+        password = serializers.CharField(max_length=128, min_length=1, write_only=True)
 
         class Meta:
             model = User
@@ -121,3 +121,19 @@ class UserSerializer(serializers.ModelSerializer[User]):
             instance.save()
             
             return instance
+        
+class LogoutSerializer(serializers.Serializer[User]):
+    refresh = serializers.CharField()
+    
+    def validate(self, attrs):
+        self.token = attrs['refresh']
+        return attrs
+    def save(self, **kwargs):  
+        """Validate save backlisted token."""
+
+        try:
+            RefreshToken(self.token).blacklist()
+
+        except TokenError as ex:
+            raise exceptions.AuthenticationFailed(ex)
+        

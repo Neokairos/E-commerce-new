@@ -48,13 +48,79 @@ class LoginAPIView(APIView):
     permission_classes = (AllowAny,)
     renderer_classes = (UserJSONRenderer,)
     serializer_class = LoginSerializer
+    
+    def post(self, request:Request) -> Response:
+        user = request.data.get('user', {})
+        
+        serializer = self.serializer_class(data=user)
+        if not serializer.is_valid():
+            print(serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+class UserRetrieveUpdateAPIView(RetrieveUpdateDestroyAPIView):
+    permission_classes = (IsAuthenticated,)
+    renderer_classes = (UserJSONRenderer,)
+    serializer_class = UserSerializer
+    lookup_url_kwarg = 'id'
+    parser_classes = [
+        parsers.JSONParser,
+        parsers.FormParser,
+        parsers.MultiPartParser,
+    ]
+
+    def get(self, request: Request, *args: tuple[Any], **kwargs: dict[str, Any]) -> Response:
+        #request has a user object passed in the axios call
+        serializer = self.get_serializer(request.user)
+        serializer.is_valid(raise_exception=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def patch(self, request: Request, *args: tuple[Any], **kwargs: dict[str, Any]) -> Response:
+        #getting the user object passed in the request
+        serializer_data = request.data.get('user', {})
+
+        serializer = UserSerializer(request.user, data=serializer_data, partial=True)
+
+        if serializer.is_valid():
+
+            user = serializer.save()
+
+            return Response(UserSerializer(user).data)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ProductViewSet(viewsets.ModelViewSet):
-   queryset = Product.objects.all()
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
    
-   serializer_class = ProductSerializer
-   def get_serializer_context(self):
-      return {"request": self.request}
+    def get_serializer_context(self):
+        return {"request": self.request}
+  
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    def update(self,request,*args,**kwargs):
+        product = self.get_object()
+        serializer = self.get_serializer(product, data=request.data,partial=True)
+        serializer.is_valid(raise_exception=True)
+        product = serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    
+class LogoutAPIView(APIView):
+    serializer_class = LogoutSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request: Request) -> Response:
+        """Validate token and save."""
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)

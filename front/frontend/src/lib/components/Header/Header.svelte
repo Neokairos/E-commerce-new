@@ -6,11 +6,10 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 
-	$: loggedIn = !!userData.username;
+	
 </script>
 
 <header>
-	<h2>{loggedIn}</h2>
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 		<div class="container-fluid">
 			<!-- Image integrated into the navbar -->
@@ -20,7 +19,7 @@
 				<li class="nav-item me-auto">
 					<a class="nav-link" href="/shop">Home</a>
 				</li>
-				{#if !loggedIn}
+				{#if !userData.username}
 					<li class="nav-item me-3 hover-animation">
 						<a class="nav-link" href="/accounts/login">Account</a>
 						<div class="down-sub">

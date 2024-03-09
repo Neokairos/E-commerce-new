@@ -67,6 +67,7 @@ export const getCurrentUser = async (
     refreshUrl: string,
     userUrl: string
 ): Promise<[object, Array<CustomError>]> => {
+    //getting the refresh token and passing the localStrorage token as second argument
     const jsonRes = await axios.post(refreshUrl, {
         refresh: `${browserGet('refreshToken')}`
     }, {
@@ -75,6 +76,7 @@ export const getCurrentUser = async (
         }
     });
     const accessRefresh: Token = jsonRes.data;
+    //get request on UserRetrieveAPIView with the access token
     if (accessRefresh.access) {
         const res = await axios.get(userUrl, {
             headers: {

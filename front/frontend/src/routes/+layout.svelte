@@ -7,13 +7,16 @@
 	import { afterUpdate, onMount } from 'svelte';
 	import Loader from '$lib/components/Loader/Loader.svelte';
 	import Header from '$lib/components/Header/Header.svelte';
-
-	$: loading.setNavigate(!!$navigating);
-	$: loading.setLoading(!!$navigating, 'Loading...');
-
+	import { showNotification } from '$lib/utils/notificationUtils';
+	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import { getCurrentUser, browserGet } from '$lib/utils/requestUtils';
 	import { variables } from '$lib/utils/constants';
 	import Page from './+page.svelte';
+	
+	$: loading.setNavigate(!!$navigating);
+	$: loading.setLoading(!!$navigating, 'Loading...');
+	$: $notificationData
+
 
 	onMount(async () => {
 		if (browserGet('refreshToken')) {
@@ -21,19 +24,17 @@
 				`${variables.BASE_API_URI}/token/refresh/`,
 				`${variables.BASE_API_URI}/user/`
 			);
-			if (errs.length<= 0) {
-				userData.set(response)
+			if (errs.length <= 0) {
+				userData.set(response);
 			}
 		}
 	});
 
 	afterUpdate(async () => {
-		const notifyEl = document.getElementById('notification') as HTMLElement;
-		if (notifyEl && $notificationData !== '') {
-			setTimeout(() => {
-				notifyEl.classList.add('disappear');
-				notificationData.set('');
-			}, 3000);
+		if ($notificationData !== '') {
+			
+			showNotification($notificationData,3000)
+			notificationData.set('');
 		}
 		if (browserGet('refreshToken')) {
 			const [response, _] = await getCurrentUser(
@@ -42,26 +43,17 @@
 			);
 			userData.update(() => response);
 		}
-
-	})
-
+	});
 </script>
 
 <svelte:head><Header /></svelte:head>
 
+<div class="top-center">
+	<SvelteToast />
+</div>
 
-{#if $notificationData}
-	<p
-		class="notification"
-		id="notification"
-		in:fly={{ x: 200, duration: 500, delay: 500 }}
-		out:fly={{ x: 200, duration: 500 }}
-	>
-		{$notificationData}
-	</p>
-{/if}
 
 <main>
-	<Loader/>
-	<slot/>
+	<Loader />
+	<slot />
 </main>
