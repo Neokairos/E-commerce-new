@@ -60,9 +60,9 @@ class User(AbstractBaseUser,PermissionsMixin):
 
     @property
     def tokens(self) -> dict[str,str]:
-        """Allow us to get a user's token by calling `user.token`."""
+        """Allow us to get a user's token by calling `user.tokens cuz its the name of the property`."""
         refresh = RefreshToken.for_user(self)
-        return {'refresh': str(refresh), 'access': str(refresh.access_token)}
+        return {'refresh': str(refresh)}
     
 
     groups = models.ManyToManyField(

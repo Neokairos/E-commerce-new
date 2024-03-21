@@ -30,18 +30,19 @@ class RegistrationAPIView(APIView):
    serializer_class = RegistrationSerializer
 
    def post(self,request: Request) -> Response:
-      user_request = request.data.get('user',{}) #returning an empty object if key pair user not found in dict
-      serializer = self.serializer_class(data=user_request)
-      serializer.is_valid(raise_exception=True)
-      user = serializer.save()
-      
-      login(request, user)
-      tokens = user.tokens
-      
-      return Response({
-         'user':serializer.data,
-         'tokens': tokens
-      }, status=status.HTTP_201_CREATED)
+        #instanciating the serializer with the user object passed from the frontend request
+        #so the returned data will always be in a user obj
+        user_request = request.data.get('user',{}) #returning an empty object if key pair user not found in dict
+        serializer = self.serializer_class(data=user_request)
+        if not serializer.is_valid():
+            print(serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.save()
+        
+        
+        return Response(
+            #inside the Response.user there will be the get_tokens data as well (cuz its part of the serializer)
+            serializer.data, status=status.HTTP_201_CREATED)
 
 
 class LoginAPIView(APIView):
@@ -74,7 +75,6 @@ class UserRetrieveUpdateAPIView(RetrieveUpdateDestroyAPIView):
     def get(self, request: Request, *args: tuple[Any], **kwargs: dict[str, Any]) -> Response:
         #request has a user object passed in the axios call
         serializer = self.get_serializer(request.user)
-        serializer.is_valid(raise_exception=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def patch(self, request: Request, *args: tuple[Any], **kwargs: dict[str, Any]) -> Response:

@@ -134,6 +134,17 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+REST_FRAMEWORK = {
+    'EXCEPTION_HANDLER': 'api.exceptions.core_exception_handler',
+    'NON_FIELD_ERRORS_KEY': 'error',
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}
+
+
+# DEFAULT USER MODEL
+AUTH_USER_MODEL = 'api.User'
 
 
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -142,6 +153,7 @@ MEDIA_URL = '/media/'
 
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = [
- 'http://localhost:5173'
+    'https://localhost:5173'
 
 ]
+

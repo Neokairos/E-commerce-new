@@ -1,16 +1,14 @@
+<!--TAKE THE TOKENS FROM LOGIN AND ADD ALSO TO REGISTRATION LOGIC-->
+
 <script lang="ts">
 	import { fly } from 'svelte/transition';
 	import { goto } from '$app/navigation';
 	import { variables } from '$lib/utils/constants';
-	import { notificationData } from '$lib/store/notificationStore';
-	import { post } from '$lib/utils/requestUtils';
-	import type { UserResponse } from '$lib/interfaces/user.interface';
+	import { notificationData, notificationErrorData, notificationSuccessData } from '$lib/store/notificationStore';
+	import { post, browserSet, browserGet } from '$lib/utils/requestUtils';
+	import type { UserResponse, Token } from '$lib/interfaces/user.interface';
 	import { type CustomError } from '$lib/interfaces/error.interface';
 	import { changeText } from '$lib/helpers/buttonText';
-	import { quartOut } from 'svelte/easing';
-    import { showNotification } from '$lib/utils/notificationUtils'
-	import { userData } from '$lib/store/userStore';
-  
 
 	let email: string,
 		username: string,
@@ -19,7 +17,12 @@
 		errors: Array<CustomError>;
 
 	const submitForm = async () => {
-		const [jsonRes, err, status] = await post(`${variables.BASE_API_URI}/register`, {
+		//preventing the token is from another user 
+		if (browserGet('refreshToken')) {
+			localStorage.removeItem('refreshToken');
+			console.log('removed token')
+		}
+		const [jsonRes, errors, status] = await post(`${variables.BASE_API_URI}/register`, {
 			user: {
 				email: email,
 				username: username, 
@@ -27,24 +30,33 @@
 			}
 		});
 		const response: UserResponse = jsonRes;
+	
         const status_code: number = status
+		
 
-		if (err.length > 0) {
-			errors = err;
-		} 
-		if (status_code === 201) {
-			notificationData.set('Registration Succesfully done!!')
-			
-			setTimeout(() =>{
-                goto('/shop');
-            }, 2000)
-			if (response.user) {
-        		userData.set(response.user);
-    		} else {
-				console.error('no user object in the response: Response:', response.user)
+		if (errors.length > 0) {
+			for (const err of errors){
+				notificationErrorData.set(err.error)
 			}
+
+		} else if (response.user && status_code === 201) {
+
+ 
+			// check if these properties exists without ts errs
+			if (response.user.tokens && response.user.tokens.refresh) {
+				browserSet('refreshToken', response.user.tokens.refresh);
+				console.log('Refresh token was set ')
+				
+				notificationSuccessData.set('Registration Succesfully done!!')
+				setTimeout(() =>{
+                	goto('/shop');
+            	}, 2000)
+			} else {
+				notificationErrorData.set('Failed due to Token Issues please try again..')
+			}
+
 		} else {
-			notificationData.set('Registration Failed please try again..')
+			notificationErrorData.set('Registration Failed please try again..')
             setTimeout(()=> {
                 goto('/accounts/register');
             }, 1500)
@@ -62,19 +74,8 @@
 	in:fly={{ y: 100, duration: 500, delay: 650 }}
 	out:fly={{ duration: 500 }}
 >
-
-
 	<h1 class="text-center mb-4">Register</h1>
-	{#if errors}
-		{#each errors as error (error.error)}
-			<p
-				class="text-center text-danger"
-				transition:fly={{ y: 20, duration: 500, easing: quartOut }}
-			>
-				{error.error}
-			</p>
-		{/each}
-	{/if}
+
 	<form class="form" on:submit|preventDefault={submitForm}>
 		<!-- Each input field is wrapped in a Bootstrap row and centered -->
 		<div class="row justify-content-center">
@@ -93,7 +94,7 @@
 			<div class="col-12 col-md-6">
 				<input
 					bind:value={email}
-					type="email"
+					type="text"
 					class="form-control mb-3"
 					aria-label="Email address"
 					placeholder="Email address"

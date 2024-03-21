@@ -36,18 +36,19 @@
 					</li>
 				{:else}
 					<li class="nav-item me-3 hover-animation">
-						<a class="nav-link" href="/accounts/login">Account</a>
+						<a class="nav-link" href="{`/accounts/user/${userData.id}/${userData.username}`}">Account</a>
 						<div class="down-sub">
+							<!--displaying user name or log out-->
 							<a
 								class="btn btn-secondary butn"
-								href={`/accounts/login/${userData.id}/${userData.username}`}
+								href={`/accounts/user/${userData.id}/${userData.username}`}
 								on:click|preventDefault={() =>
-									goto(`/accounts/login/${userData.id}/${userData.username}`)}
+									goto(`/accounts/user/${userData.id}/${userData.username}`)}
 							>
 								{userData.username}
 							</a>
 							<div class="ou">or</div>
-							<a href={null} on:click={logOutUser} class="nav-link underlined-text">Logout</a>
+							<a href={null} on:click={logOutUser} style="font-size:medium;" class="underlined-text">Logout</a>
 						</div>
 					</li>
 				{/if}

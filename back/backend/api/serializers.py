@@ -9,6 +9,7 @@ from .utils import validate_email as email_is_valid
 class RegistrationSerializer(serializers.ModelSerializer[User]):
     
     password = serializers.CharField(max_length=20,min_length=1,write_only=True)
+    tokens = serializers.SerializerMethodField()
     
     class Meta:
         model = User
@@ -19,7 +20,8 @@ class RegistrationSerializer(serializers.ModelSerializer[User]):
                 'is_active',
                 'created_at',
                 'updated_at',
-                'birth_date']
+                'birth_date',
+                'tokens']
 
     def validate_email(self, value:str) -> str:
         valid, error_text = email_is_valid(value)
@@ -36,6 +38,13 @@ class RegistrationSerializer(serializers.ModelSerializer[User]):
             
         return value
             
+
+
+    def get_tokens(self, obj):
+        #obj is the user instance being serialized
+        user = User.objects.get(email=obj.email)
+        
+        return {'refresh': user.tokens['refresh']}
     
 
     def create(self, validated_data):
@@ -64,6 +73,7 @@ class LoginSerializer(serializers.ModelSerializer[User]):
     tokens = serializers.SerializerMethodField()
 
     def get_tokens(self, obj):
+        #obj is the user instance being serialized
         user = User.objects.get(email=obj.email)
         
         return {'refresh': user.tokens['refresh'], 'access': user.tokens['access']}

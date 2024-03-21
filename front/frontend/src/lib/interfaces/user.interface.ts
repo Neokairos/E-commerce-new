@@ -10,6 +10,7 @@ export interface User {
 	tokens?: Token;
 	birth_date?: string;
 	is_staff?: boolean;
+	
 }
 
 export interface UserResponse {
