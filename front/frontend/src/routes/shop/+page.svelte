@@ -5,6 +5,7 @@
 	import { onMount } from 'svelte';
 	import { productStore } from '../../store';
 	import { variables } from '$lib/utils/constants';
+	import { fly } from 'svelte/transition';
 	let loading = true;
 	onMount(async function () {
 		try {
@@ -26,35 +27,41 @@
 <div>
 	<h2 class="my-4">Products</h2>
 
-	{#if loading}
-		<div class="center">
-			<div class="loader" role="status"></div>
-		</div>
-	{:else}
-		<div class="row">
-			{#each $productStore.all as item}
-				<div class="col-12 col-sm-6 col-md-4">
-					<div class="card w-100 h-100">
-						<img
-							class="card-img-top"
-							style="height: 300px; object-fit: cover; margin-left:5px"
-							src={item.image}
-							alt="item"
-						/>
+	<section in:fly={{ y: 100, duration: 500, delay: 650 }} out:fly={{ duration: 500 }}>
+		
+		{#if loading}
+			<div class="center">
+				<div class="loader" role="status"></div>
+			</div>
+		{:else}
+			<div class="row">
+				{#each $productStore.all as item}
+					<div class="col-12 col-sm-6 col-md-4">
+						<div class="card w-100 h-100">
+							<div class="box-image">
+								<a href="/shop/{item.id}">
+									<img class="product-img" src={item.image} alt="item" />
+								</a>
 
-						<div class="card-body d-flex flex-column justify-content-between gap-4">
-							<div>
-								<h5 class="card-title">{item.title}</h5>
-								<i class="card-text">Seller: <b>{item.seller}</b></i>
+								<div class="overlay">
+									<a href="/shop/{item.id}" class="image-button">View</a>
+									<button class="image-button">Add to Cart</button>
+								</div>
 							</div>
+							<div class="card-body d-flex flex-column justify-content-between gap-4">
+								<div>
+									<a href="/shop/{item.id}" class="product-title">{item.title}</a>
+									<span class="product-price">${item.price}</span>
 
-							<div>
-								<a href="/shop/{item.id}" class="btn btn-info">View</a>
+									<i class="card-text" style="font-size: small; display:block"
+										>Seller: <b>{item.seller}</b></i
+									>
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-			{/each}
-		</div>
-	{/if}
+				{/each}
+			</div>
+		{/if}
+	</section>
 </div>

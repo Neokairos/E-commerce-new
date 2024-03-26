@@ -4,7 +4,7 @@
 	import axios from 'axios';
 	import { productStore } from '../../../store';
 	import { onMount } from 'svelte';
-
+	import { fly } from 'svelte/transition';
 	// @ts-ignore
 	export let data;
 	// @ts-ignore
@@ -31,7 +31,10 @@
 	});
 </script>
 
-
+<section
+	in:fly={{ y: 100, duration: 500, delay: 650 }}
+	out:fly={{ duration: 500 }}
+>
 	{#if loading}
 		<div class="center">
 			<div class="loader" role="status"></div>
@@ -53,5 +56,5 @@
 		<p>No product was found with ID {data.id}</p>
 		<a href="/shop" class="btn btn-danger p-8 mb-5 mt-2 pr-5">Back</a>
 	{/if}
-
+</section>
 

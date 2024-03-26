@@ -42,7 +42,7 @@ export const post = async (
         const response = res.data;
         const status = res.status; // Capture the status
 
-        if (status === 400) {
+        if (status === 200 || status === 201) {
             return [response, [], status];
 
         } else {
@@ -102,7 +102,7 @@ export const getCurrentUser = async (
         });
 
         const accessRefresh: Token = jsonRes.data.access;
-      
+        console.log(accessRefresh)
         //get request on UserRetrieveAPIView with the access token
         if (accessRefresh) {
             
