@@ -32,6 +32,7 @@
 </script>
 
 <section
+	class="container mt-5"
 	in:fly={{ y: 100, duration: 500, delay: 650 }}
 	out:fly={{ duration: 500 }}
 >
@@ -40,16 +41,24 @@
 			<div class="loader" role="status"></div>
 		</div>
 	{:else if !loading}
-		<h2 class="mb-4">{product.title}</h2>
 		<div class="row mt-4">
 			<div class="col-12 col-md-4">
-				<img src={product.image} alt="product" class="w-100 mb-3" />
-				<h5 class="mt-4">Seller: {product.seller}</h5>
-				<a href="/shop/{product.id}/buy" class="btn btn-primary p-8 mb-5 mt-2 pr-5">Buy</a>
-				<a href="/shop" class="btn btn-danger p-8 mb-5 mt-2 pr-5 ">Back</a>
+				<img src={product.image} alt="product" class="w-100 mb-1" />
+				<b >Seller: {product.seller}</b>
+				<br/>
+				<a href="/shop" class="btn btn-danger">Back</a>
 			</div>
-			<div class="col-12 col-md-8 py-2">
-				<p class="mb-2">{product.description}</p>
+
+			<div class="col-12 col-md-7">
+
+				<div >
+					<h1 class="mb-4 product-name-id">{product.title}</h1>
+					<span class="product-price mb-4 "><abbr id="currency" title="US Dollar">$</abbr>{product.price}</span>
+		
+				</div>
+				<a href="/shop/{product.id}/buy" class="buy-button">Buy</a>
+				<p class="mt-3">Description:<br/>- {product.description}</p>
+			
 			</div>
 		</div>
 	{:else}

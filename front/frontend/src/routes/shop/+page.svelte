@@ -44,8 +44,20 @@
 								</a>
 
 								<div class="overlay">
-									<a href="/shop/{item.id}" class="image-button">View</a>
-									<button class="image-button">Add to Cart</button>
+									<a href="/shop/{item.id}" class="image-button">
+										<span>View</span>
+										<span>
+											<i class="icon icon-search"></i>
+										</span>
+
+									</a>
+									<a href="/shop/cart" class="image-button">
+										<span>Add to Cart</span>
+										<span>
+											<i class="icon icon-cart"></i>
+										</span>						
+									</a>
+
 								</div>
 							</div>
 							<div class="card-body d-flex flex-column justify-content-between gap-4">
@@ -54,7 +66,7 @@
 									<span class="product-price">${item.price}</span>
 
 									<i class="card-text" style="font-size: small; display:block"
-										>Seller: <b>{item.seller}</b></i
+										>Seller: <a href="/shop/user/profile" id="seller">{item.seller}</a></i
 									>
 								</div>
 							</div>

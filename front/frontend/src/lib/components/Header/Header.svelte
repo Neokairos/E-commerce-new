@@ -17,7 +17,14 @@
 			<ul class="navbar-nav">
 				<!-- Home link moved to the left -->
 				<li class="nav-item me-auto">
-					<a class="nav-link" href="/shop">Home</a>
+					<a class="nav-link" href="/shop">
+						<span>
+							<i class="icon icon-home" ></i>
+						</span>
+						<span>Home</span>
+						
+					</a>
+
 				</li>
 				{#if !userData.username}
 					<li class="nav-item me-3 hover-animation">

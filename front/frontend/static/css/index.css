@@ -58,37 +58,27 @@
   border-radius: 10px;
   text-align: center;
   z-index: 1;
-  opacity: 0;
-  visibility: hidden;
+ 
   
   transform-origin: top;
   right: -5px;
-  transition: cubic-bezier(.54, -.65, .48, 1.64) .3s;
+
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.2);
+  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out, transform 0.3s ease-in-out;
  }
 
-@keyframes scalar {
-  0% { scale: 0.2;}
-  50% { scale : 0.9; }
-  90% { scale : 1.09; } 
-  100% { scale : 1.0; }
-}
-@keyframes disappear {
-  0% {
-    opacity: 1;
-    visibility: visible;
-    transform: scale(1);
- }
-  100% {
-    opacity: 0;
-    visibility: hidden;
-    transform: scale(0.2);
- }
-}
-.hover-animation:hover .down-sub {
+ 
+ .hover-animation:hover .down-sub {
   opacity: 1;
   visibility: visible;
-  animation: scalar 0.4s ease-in-out forwards;
-}
+  transform: scale(1);
+  transition: opacity 0.4s ease-in-out, visibility 0.4s ease-in-out, transform 0.4s ease-in-out;
+ }
+
+
+
 
 
 .underlined-text {
@@ -179,12 +169,13 @@
 }
 
 .product-img {
-  height: 300px; 
-  width: 423px;
+  height: 310px; 
+  width: 100%;
   object-fit: cover;
-  margin-left:5px;
+
   margin-top: 5px;
   transition: opacity 0.5s ease;
+
 }
 
 
@@ -196,6 +187,7 @@
   display: inline-block;
   position: relative;
 }
+
 
 .overlay {
   position: absolute;
@@ -225,14 +217,86 @@
   border: none;
   padding: 10px 20px;
   margin: 0 10px;
-  
-  transition: color 0.4s ease-in-out, background-color 0.4s ease-in-out;
+  opacity: 0;
+  visibility: hidden;
   border-radius: 25px;
   text-decoration: none;
+  transition: opacity 0.4s ease-in-out, visibility 0.4s ease-in-out, transform 0.4s ease-in-out;
+  transform: scale(0.2);
+  transform-origin: top;
 }
 
-.image-button:hover {
-  color: rgb(216, 204, 189);
-  background-color: #137dbe;;
 
+.box-image:hover .image-button {
+  transform: scale(1);
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.4s ease-in-out, visibility 0.4s ease-in-out, transform 0.4s ease-in-out;
+}
+.box-image:hover .image-button:hover {
+  color: rgb(189, 189, 189);
+  transform: scale(1.1);
+  background-color: #137dbe;
+  transition: transform 0.4s ease-out, color 0.4s ease-out;
+}
+
+.product-name-id {
+  font-family: 'Roboto Slab';
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 0px;
+  padding-top: 10px;
+
+
+}
+
+.buy-button {
+  background-color: #33ce1f;
+  text-decoration: none;
+  border: 0;
+  height: 60px;
+  border-radius: 30px;
+  width: 50%;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #fff;
+  transition: ease-in-out .3s;
+  display: flex; /* Changed from block to flex */
+  align-items: center; /* Added for vertical centering */
+  justify-content: center; /* Added for horizontal centering */
+  text-align: center; /* Keeps text centered horizontally */
+ 
+ }
+ 
+
+
+.buy-button:hover {
+  background-color: #228f14;
+ }
+
+
+
+.product-center {
+  font-family: arial;
+  font-size: 24px;
+  
+
+
+  display: flex;
+
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  
+}
+
+#currency {
+  border: none;
+  text-decoration: none;
+ 
+}
+#seller {
+  text-decoration: none;
+  cursor: pointer;
 }
